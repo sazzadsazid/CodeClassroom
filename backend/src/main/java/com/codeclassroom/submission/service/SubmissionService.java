@@ -66,22 +66,37 @@ public class SubmissionService {
     }
 
     public Optional<SubmissionDto> getSubmissionById(Long id) {
-        return submissionRepository.findById(id).map(this::mapToDto);
+        return submissionRepository.findById(id).map(submission -> {
+            com.codeclassroom.auth.util.SecurityUtils.checkStudentOwnership(submission.getStudentId());
+            return mapToDto(submission);
+        });
     }
 
     public List<SubmissionDto> getSubmissionsByAssignmentId(Long assignmentId) {
+        // Teacher/Admin can view all. Students shouldn't access this endpoint if they shouldn't see others, 
+        // wait, students should only view their own submissions. Or maybe they shouldn't call this endpoint at all.
+        // Actually, if a student calls this, we should filter by their ID.
+        com.codeclassroom.auth.filter.CustomUserDetails currentUser = com.codeclassroom.auth.util.SecurityUtils.getCurrentUser();
+        if (currentUser != null && "STUDENT".equals(currentUser.getRole())) {
+            return submissionRepository.findByAssignmentId(assignmentId).stream()
+                    .filter(s -> s.getStudentId().equals(currentUser.getId()))
+                    .map(this::mapToDto)
+                    .collect(Collectors.toList());
+        }
         return submissionRepository.findByAssignmentId(assignmentId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public List<SubmissionDto> getSubmissionsByStudentId(Long studentId) {
+        com.codeclassroom.auth.util.SecurityUtils.checkStudentOwnership(studentId);
         return submissionRepository.findByStudentId(studentId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public SubmissionDto createSubmission(SubmissionRequest request) {
+        com.codeclassroom.auth.util.SecurityUtils.checkStudentOwnership(request.getStudentId());
         Submission submission = Submission.builder()
                 .assignmentId(request.getAssignmentId())
                 .studentId(request.getStudentId())

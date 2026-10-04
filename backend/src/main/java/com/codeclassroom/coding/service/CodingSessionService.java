@@ -66,16 +66,21 @@ public class CodingSessionService {
     }
 
     public Optional<CodingSessionDto> getSessionById(Long id) {
-        return codingSessionRepository.findById(id).map(this::mapToDto);
+        return codingSessionRepository.findById(id).map(session -> {
+            com.codeclassroom.auth.util.SecurityUtils.checkStudentOwnership(session.getStudentId());
+            return mapToDto(session);
+        });
     }
 
     public List<CodingSessionDto> getSessionsByStudentId(Long studentId) {
+        com.codeclassroom.auth.util.SecurityUtils.checkStudentOwnership(studentId);
         return codingSessionRepository.findByStudentId(studentId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public CodingSessionDto createSession(CodingSessionRequest request) {
+        com.codeclassroom.auth.util.SecurityUtils.checkStudentOwnership(request.getStudentId());
         CodingSession session = CodingSession.builder()
                 .studentId(request.getStudentId())
                 .assignmentId(request.getAssignmentId())
@@ -91,6 +96,7 @@ public class CodingSessionService {
 
     public Optional<CodingSessionDto> updateCode(Long id, String newCode) {
         return codingSessionRepository.findById(id).map(session -> {
+            com.codeclassroom.auth.util.SecurityUtils.checkStudentOwnership(session.getStudentId());
             session.setCode(newCode);
             session.setLastSavedAt(LocalDateTime.now());
             return mapToDto(codingSessionRepository.save(session));
@@ -99,6 +105,7 @@ public class CodingSessionService {
 
     public Optional<CodingSessionDto> updateStatus(Long id, CodingSessionStatus newStatus) {
         return codingSessionRepository.findById(id).map(session -> {
+            com.codeclassroom.auth.util.SecurityUtils.checkStudentOwnership(session.getStudentId());
             session.setStatus(newStatus);
             return mapToDto(codingSessionRepository.save(session));
         });
