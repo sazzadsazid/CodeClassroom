@@ -1,73 +1,88 @@
 package com.codeclassroom.submission.service;
 
+import com.codeclassroom.assignment.model.Assignment;
 import com.codeclassroom.assignment.model.Language;
+import com.codeclassroom.assignment.repository.AssignmentRepository;
 import com.codeclassroom.submission.dto.SubmissionDto;
 import com.codeclassroom.submission.dto.SubmissionRequest;
 import com.codeclassroom.submission.model.Submission;
 import com.codeclassroom.submission.model.SubmissionStatus;
+import com.codeclassroom.submission.repository.SubmissionRepository;
+import com.codeclassroom.user.model.User;
+import com.codeclassroom.user.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
+@DependsOn({"userService", "assignmentService"})
 public class SubmissionService {
-    private final List<Submission> submissions = new ArrayList<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+    private final SubmissionRepository submissionRepository;
+    private final AssignmentRepository assignmentRepository;
+    private final UserRepository userRepository;
 
-    public SubmissionService() {
-        submissions.add(new Submission(
-                idGenerator.getAndIncrement(),
-                1L, // assignmentId (Hello World in Java)
-                1L, // studentId (from UserService sample data)
-                "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello World\");\n    }\n}",
-                Language.JAVA,
-                LocalDateTime.now().minusHours(2),
-                SubmissionStatus.ACCEPTED
-        ));
-        submissions.add(new Submission(
-                idGenerator.getAndIncrement(),
-                2L, // assignmentId (Array Manipulation)
-                1L, // studentId
-                "def main():\n    pass",
-                Language.PYTHON,
-                LocalDateTime.now().minusHours(1),
-                SubmissionStatus.WRONG_ANSWER
-        ));
+    public SubmissionService(SubmissionRepository submissionRepository, AssignmentRepository assignmentRepository, UserRepository userRepository) {
+        this.submissionRepository = submissionRepository;
+        this.assignmentRepository = assignmentRepository;
+        this.userRepository = userRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        User student = userRepository.findAll().stream().filter(u -> "student".equals(u.getUsername())).findFirst().orElse(null);
+        Assignment hwJava = assignmentRepository.findAll().stream().filter(a -> "Hello World in Java".equals(a.getTitle())).findFirst().orElse(null);
+        
+        if (student != null && hwJava != null && !submissionRepository.existsByAssignmentIdAndStudentId(hwJava.getId(), student.getId())) {
+            submissionRepository.save(Submission.builder()
+                    .assignmentId(hwJava.getId())
+                    .studentId(student.getId())
+                    .code("public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello World\");\n    }\n}")
+                    .language(Language.JAVA)
+                    .submittedAt(LocalDateTime.now().minusHours(2))
+                    .status(SubmissionStatus.ACCEPTED)
+                    .build());
+        }
+
+        Assignment arrayMan = assignmentRepository.findAll().stream().filter(a -> "Array Manipulation".equals(a.getTitle())).findFirst().orElse(null);
+        if (student != null && arrayMan != null && !submissionRepository.existsByAssignmentIdAndStudentId(arrayMan.getId(), student.getId())) {
+            submissionRepository.save(Submission.builder()
+                    .assignmentId(arrayMan.getId())
+                    .studentId(student.getId())
+                    .code("def main():\n    pass")
+                    .language(Language.PYTHON)
+                    .submittedAt(LocalDateTime.now().minusHours(1))
+                    .status(SubmissionStatus.WRONG_ANSWER)
+                    .build());
+        }
     }
 
     public List<SubmissionDto> getAllSubmissions() {
-        return submissions.stream().map(this::mapToDto).collect(Collectors.toList());
+        return submissionRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     public Optional<SubmissionDto> getSubmissionById(Long id) {
-        return submissions.stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst()
-                .map(this::mapToDto);
+        return submissionRepository.findById(id).map(this::mapToDto);
     }
 
     public List<SubmissionDto> getSubmissionsByAssignmentId(Long assignmentId) {
-        return submissions.stream()
-                .filter(s -> s.getAssignmentId().equals(assignmentId))
+        return submissionRepository.findByAssignmentId(assignmentId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public List<SubmissionDto> getSubmissionsByStudentId(Long studentId) {
-        return submissions.stream()
-                .filter(s -> s.getStudentId().equals(studentId))
+        return submissionRepository.findByStudentId(studentId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public SubmissionDto createSubmission(SubmissionRequest request) {
         Submission submission = Submission.builder()
-                .id(idGenerator.getAndIncrement())
                 .assignmentId(request.getAssignmentId())
                 .studentId(request.getStudentId())
                 .code(request.getCode())
@@ -75,8 +90,8 @@ public class SubmissionService {
                 .submittedAt(LocalDateTime.now())
                 .status(SubmissionStatus.PENDING)
                 .build();
-        submissions.add(submission);
-        return mapToDto(submission);
+        Submission savedSubmission = submissionRepository.save(submission);
+        return mapToDto(savedSubmission);
     }
 
     private SubmissionDto mapToDto(Submission submission) {

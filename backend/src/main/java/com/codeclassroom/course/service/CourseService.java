@@ -3,63 +3,67 @@ package com.codeclassroom.course.service;
 import com.codeclassroom.course.dto.CourseDto;
 import com.codeclassroom.course.dto.CourseRequest;
 import com.codeclassroom.course.model.Course;
+import com.codeclassroom.course.repository.CourseRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
-    private final List<Course> courses = new ArrayList<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+    private final CourseRepository courseRepository;
 
-    public CourseService() {
-        // Teacher ID 2 was created in the UserService sample data
-        courses.add(new Course(idGenerator.getAndIncrement(), "CS101", "Introduction to Programming", "Learn the basics of coding.", 2L));
-        courses.add(new Course(idGenerator.getAndIncrement(), "CS201", "Data Structures", "Learn about arrays, lists, and trees.", 2L));
+    public CourseService(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        if (!courseRepository.existsByCourseCode("CS101")) {
+            courseRepository.save(Course.builder().courseCode("CS101").name("Introduction to Programming").description("Learn the basics of coding.").teacherId(2L).build());
+        }
+        if (!courseRepository.existsByCourseCode("CS201")) {
+            courseRepository.save(Course.builder().courseCode("CS201").name("Data Structures").description("Learn about arrays, lists, and trees.").teacherId(2L).build());
+        }
     }
 
     public List<CourseDto> getAllCourses() {
-        return courses.stream().map(this::mapToDto).collect(Collectors.toList());
+        return courseRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     public Optional<CourseDto> getCourseById(Long id) {
-        return courses.stream()
-                .filter(course -> course.getId().equals(id))
-                .findFirst()
-                .map(this::mapToDto);
+        return courseRepository.findById(id).map(this::mapToDto);
     }
 
     public CourseDto createCourse(CourseRequest request) {
         Course course = Course.builder()
-                .id(idGenerator.getAndIncrement())
                 .courseCode(request.getCourseCode())
                 .name(request.getName())
                 .description(request.getDescription())
                 .teacherId(request.getTeacherId())
                 .build();
-        courses.add(course);
-        return mapToDto(course);
+        Course savedCourse = courseRepository.save(course);
+        return mapToDto(savedCourse);
     }
 
     public Optional<CourseDto> updateCourse(Long id, CourseRequest request) {
-        for (Course course : courses) {
-            if (course.getId().equals(id)) {
-                course.setCourseCode(request.getCourseCode());
-                course.setName(request.getName());
-                course.setDescription(request.getDescription());
-                course.setTeacherId(request.getTeacherId());
-                return Optional.of(mapToDto(course));
-            }
-        }
-        return Optional.empty();
+        return courseRepository.findById(id).map(course -> {
+            course.setCourseCode(request.getCourseCode());
+            course.setName(request.getName());
+            course.setDescription(request.getDescription());
+            course.setTeacherId(request.getTeacherId());
+            return mapToDto(courseRepository.save(course));
+        });
     }
 
     public boolean deleteCourse(Long id) {
-        return courses.removeIf(course -> course.getId().equals(id));
+        if (courseRepository.existsById(id)) {
+            courseRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     private CourseDto mapToDto(Course course) {
