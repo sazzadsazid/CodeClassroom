@@ -69,7 +69,7 @@ const AdminUsers: React.FC = () => {
                 <td style={{ padding: '14px 20px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--color-bg-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
-                      {user.role === 'admin' ? <ShieldCheck size={16} /> : user.role === 'teacher' ? <BookOpen size={16} /> : <User size={16} />}
+                      {user.role === 'ADMIN' ? <ShieldCheck size={16} /> : user.role === 'TEACHER' ? <BookOpen size={16} /> : <User size={16} />}
                     </div>
                     <div>
                       <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>{user.name}</p>
@@ -79,8 +79,8 @@ const AdminUsers: React.FC = () => {
                 </td>
                 <td style={{ padding: '14px 20px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', padding: '4px 8px', borderRadius: '6px', 
-                    backgroundColor: user.role === 'admin' ? 'rgba(245,158,11,0.12)' : user.role === 'teacher' ? 'rgba(16,185,129,0.12)' : 'rgba(99,102,241,0.12)',
-                    color: user.role === 'admin' ? '#f59e0b' : user.role === 'teacher' ? '#10b981' : '#6366f1'
+                    backgroundColor: user.role === 'ADMIN' ? 'rgba(245,158,11,0.12)' : user.role === 'TEACHER' ? 'rgba(16,185,129,0.12)' : 'rgba(99,102,241,0.12)',
+                    color: user.role === 'ADMIN' ? '#f59e0b' : user.role === 'TEACHER' ? '#10b981' : '#6366f1'
                   }}>
                     {user.role}
                   </span>

@@ -4,9 +4,9 @@ import { Code2, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useAuth, type UserRole } from '../context/AuthContext';
 
 const ROLE_HOME: Record<UserRole, string> = {
-  student: '/student/dashboard',
-  teacher: '/teacher/dashboard',
-  admin:   '/admin/dashboard',
+  STUDENT: '/student/dashboard',
+  TEACHER: '/teacher/dashboard',
+  ADMIN:   '/admin/dashboard',
 };
 
 const DEMO_BADGES = [
@@ -34,18 +34,15 @@ const Login: React.FC = () => {
     }
   }, [user, navigate, location.state]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    // Small artificial delay for UX
-    setTimeout(() => {
-      const result = login(username.trim(), password);
-      if (!result.success) {
-        setError(result.error ?? 'Login failed.');
-      }
-      setLoading(false);
-    }, 350);
+    const result = await login(username.trim(), password);
+    if (!result.success) {
+      setError(result.error ?? 'Login failed.');
+    }
+    setLoading(false);
   };
 
   const fillDemo = (user: string, pass: string) => {

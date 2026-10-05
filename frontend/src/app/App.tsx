@@ -41,19 +41,19 @@ import AdminSettings from '../features/admin/pages/AdminSettings';
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 const S = (page: React.ReactNode) => (
-  <ProtectedRoute requiredRole="student">
+  <ProtectedRoute requiredRole="STUDENT">
     <StudentLayout>{page}</StudentLayout>
   </ProtectedRoute>
 );
 
 const T = (page: React.ReactNode) => (
-  <ProtectedRoute requiredRole="teacher">
+  <ProtectedRoute requiredRole="TEACHER">
     <TeacherLayout>{page}</TeacherLayout>
   </ProtectedRoute>
 );
 
 const A = (page: React.ReactNode) => (
-  <ProtectedRoute requiredRole="admin">
+  <ProtectedRoute requiredRole="ADMIN">
     <AdminLayout>{page}</AdminLayout>
   </ProtectedRoute>
 );

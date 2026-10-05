@@ -32,9 +32,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
   if (user.role !== requiredRole) {
     // Redirect to user's own portal
     const home: Record<UserRole, string> = {
-      student: '/student/dashboard',
-      teacher: '/teacher/dashboard',
-      admin: '/admin/dashboard',
+      STUDENT: '/student/dashboard',
+      TEACHER: '/teacher/dashboard',
+      ADMIN: '/admin/dashboard',
     };
     return <Navigate to={home[user.role]} replace />;
   }

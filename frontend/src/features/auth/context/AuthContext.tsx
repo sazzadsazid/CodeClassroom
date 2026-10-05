@@ -1,39 +1,27 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '../../../api/client';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
-export type UserRole = 'student' | 'teacher' | 'admin';
+export type UserRole = 'STUDENT' | 'TEACHER' | 'ADMIN';
 
 export interface AuthUser {
+  userId: number;
   username: string;
   role: UserRole;
-  displayName: string;
-  avatar: string;
+  token: string;
+  // frontend-specific fields that might not come from backend yet, so we'll mock them or omit them.
+  displayName?: string;
+  avatar?: string;
 }
 
 interface AuthContextValue {
   user: AuthUser | null;
   isLoading: boolean;
-  login: (username: string, password: string) => { success: boolean; error?: string };
+  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
 }
 
-// ─── Mock credentials ──────────────────────────────────────────────────────
-const MOCK_USERS: Record<string, { password: string; user: AuthUser }> = {
-  student: {
-    password: 'student123',
-    user: { username: 'student', role: 'student', displayName: 'Alex Johnson', avatar: 'AJ' },
-  },
-  teacher: {
-    password: 'teacher123',
-    user: { username: 'teacher', role: 'teacher', displayName: 'Dr. Sarah Chen', avatar: 'SC' },
-  },
-  admin: {
-    password: 'admin123',
-    user: { username: 'admin', role: 'admin', displayName: 'Admin User', avatar: 'AU' },
-  },
-};
-
-const SESSION_KEY = 'cc_auth_user';
+const SESSION_KEY = 'cc_auth_session';
 
 // ─── Context ───────────────────────────────────────────────────────────────
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -42,10 +30,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Restore session from sessionStorage on mount
+  // Restore session from localStorage on mount
   useEffect(() => {
     try {
-      const stored = sessionStorage.getItem(SESSION_KEY);
+      const stored = localStorage.getItem(SESSION_KEY);
       if (stored) {
         setUser(JSON.parse(stored));
       }
@@ -55,22 +43,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  const login = useCallback((username: string, password: string): { success: boolean; error?: string } => {
-    const entry = MOCK_USERS[username.toLowerCase()];
-    if (!entry) {
-      return { success: false, error: 'Username not found.' };
+  const login = useCallback(async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        return { success: false, error: 'Invalid username or password' };
+      }
+
+      const data = await response.json();
+      
+      const authUser: AuthUser = {
+        token: data.token,
+        userId: data.userId,
+        username: data.username,
+        role: data.role,
+        displayName: data.username, // Using username as fallback
+        avatar: data.username.substring(0, 2).toUpperCase(),
+      };
+
+      setUser(authUser);
+      localStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: 'Network error. Please try again later.' };
     }
-    if (entry.password !== password) {
-      return { success: false, error: 'Incorrect password.' };
-    }
-    setUser(entry.user);
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(entry.user));
-    return { success: true };
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
-    sessionStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(SESSION_KEY);
   }, []);
 
   return (
