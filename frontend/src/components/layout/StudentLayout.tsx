@@ -10,7 +10,7 @@ import { mockNotifications } from '../../data/mockData';
 const NAV = [
   { id: 'dashboard',     label: 'Dashboard',      path: '/student/dashboard',       icon: <LayoutDashboard size={20} /> },
   { id: 'courses',       label: 'My Courses',      path: '/student/courses',         icon: <BookOpen size={20} /> },
-  { id: 'assignments',   label: 'Assignments',     path: '/student/assignments',     icon: <ClipboardList size={20} /> },
+  { id: 'exams',         label: 'Exams',           path: '/student/exams',           icon: <ClipboardList size={20} /> },
   { id: 'history',       label: 'Coding History',  path: '/student/coding-history',  icon: <History size={20} /> },
   { id: 'submissions',   label: 'Submissions',     path: '/student/submissions',     icon: <Send size={20} /> },
 ];
@@ -110,7 +110,7 @@ const StudentLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       {/* Main content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
         <StudentTopNav />
-        <main style={{ flex: 1, overflowY: 'auto', padding: '28px', backgroundColor: 'var(--color-bg-primary)' }}>
+        <main style={{ flex: 1, overflowY: 'auto', padding: location.pathname.includes('/workspace') || location.pathname.includes('/attempt') ? '0' : '28px', backgroundColor: 'var(--color-bg-primary)' }}>
           {children}
         </main>
       </div>
@@ -122,7 +122,7 @@ const StudentLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 const STUDENT_META: Record<string, { title: string; subtitle: string }> = {
   '/student/dashboard':      { title: 'Dashboard',      subtitle: 'Welcome back 👋' },
   '/student/courses':        { title: 'My Courses',      subtitle: 'Track your learning progress' },
-  '/student/assignments':    { title: 'Assignments',     subtitle: 'Manage your tasks and deadlines' },
+  '/student/exams':          { title: 'Exams',           subtitle: 'Your active and upcoming exams' },
   '/student/coding-history': { title: 'Coding History',  subtitle: 'Your coding activity over time' },
   '/student/submissions':    { title: 'Submissions',     subtitle: 'Review your submitted work' },
   '/student/notifications':  { title: 'Notifications',   subtitle: 'Stay up to date' },
@@ -130,8 +130,10 @@ const STUDENT_META: Record<string, { title: string; subtitle: string }> = {
 
 const resolveStudentMeta = (pathname: string) => {
   if (STUDENT_META[pathname]) return STUDENT_META[pathname];
-  if (pathname.startsWith('/student/assignments/') && !pathname.includes('/workspace'))
-    return { title: 'Assignment Details', subtitle: 'Review requirements and start coding' };
+  if (pathname.startsWith('/student/exams/') && !pathname.includes('/attempt'))
+    return { title: 'Exam Details', subtitle: 'Review exam requirements' };
+  if (pathname.includes('/attempt'))
+    return { title: 'Exam Workspace', subtitle: 'Write and submit your exam code' };
   if (pathname.includes('/workspace'))
     return { title: 'Coding Workspace', subtitle: 'Write and test your solution' };
   return { title: 'CodeClassroom', subtitle: '' };

@@ -24,7 +24,7 @@ public class CodingSessionController {
     @PostMapping("/coding/sessions")
     public ResponseEntity<?> createSession(@RequestBody CodingSessionRequest request) {
         if (!isValid(request)) {
-            return ResponseEntity.badRequest().body("Validation failed: studentId, assignmentId, code, and language are required.");
+            return ResponseEntity.badRequest().body("Validation failed: studentId, code, and language are required.");
         }
         CodingSessionDto createdSession = codingSessionService.createSession(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSession);
@@ -62,9 +62,23 @@ public class CodingSessionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/exam-attempts/{attemptId}/coding-session")
+    public ResponseEntity<?> createSessionForAttempt(@PathVariable Long attemptId, @RequestBody CodingSessionRequest request) {
+        request.setAttemptId(attemptId);
+        if (!isValid(request)) {
+            return ResponseEntity.badRequest().body("Validation failed: studentId, attemptId, code, and language are required.");
+        }
+        CodingSessionDto createdSession = codingSessionService.createSession(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdSession);
+    }
+
+    @GetMapping("/exam-attempts/{attemptId}/coding-session")
+    public ResponseEntity<List<CodingSessionDto>> getSessionsByAttemptId(@PathVariable Long attemptId) {
+        return ResponseEntity.ok(codingSessionService.getSessionsByAttemptId(attemptId));
+    }
+
     private boolean isValid(CodingSessionRequest request) {
         return request.getStudentId() != null &&
-               request.getAssignmentId() != null &&
                request.getCode() != null &&
                request.getLanguage() != null;
     }

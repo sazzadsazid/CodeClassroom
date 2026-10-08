@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, GraduationCap, Monitor, ClipboardList,
-  Users, HelpCircle, Code2,
+  HelpCircle, Code2,
   ChevronLeft, ChevronRight, LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../features/auth/context/AuthContext';
@@ -11,8 +11,7 @@ const NAV = [
   { id: 'dashboard',    label: 'Dashboard',      path: '/teacher/dashboard',     icon: <LayoutDashboard size={20} /> },
   { id: 'classes',      label: 'My Classes',      path: '/teacher/classes',       icon: <GraduationCap size={20} /> },
   { id: 'monitor',      label: 'Live Monitor',    path: '/teacher/live-monitor',  icon: <Monitor size={20} /> },
-  { id: 'assignments',  label: 'Assignments',     path: '/teacher/assignments',   icon: <ClipboardList size={20} /> },
-  { id: 'submissions',  label: 'Submissions',     path: '/teacher/submissions',   icon: <Users size={20} /> },
+  { id: 'exams',        label: 'Exams',           path: '/teacher/exams',         icon: <ClipboardList size={20} /> },
   { id: 'help',         label: 'Help Requests',   path: '/teacher/help-requests', icon: <HelpCircle size={20} /> },
 ];
 
@@ -20,8 +19,7 @@ const TEACHER_META: Record<string, { title: string; subtitle: string }> = {
   '/teacher/dashboard':      { title: 'Teacher Dashboard',  subtitle: 'Overview of your courses and students' },
   '/teacher/classes':        { title: 'My Classes',          subtitle: 'Manage your courses and students' },
   '/teacher/live-monitor':   { title: 'Live Monitor',        subtitle: 'Watch students code in real time' },
-  '/teacher/assignments':    { title: 'Assignments',         subtitle: 'Manage assignments across all courses' },
-  '/teacher/submissions':    { title: 'Submissions',         subtitle: 'Review and grade student submissions' },
+  '/teacher/exams':          { title: 'Exams',               subtitle: 'Manage exams across all courses' },
   '/teacher/session-replay': { title: 'Session Replay',      subtitle: 'Replay recorded coding sessions' },
   '/teacher/ai-analysis':    { title: 'AI Analysis',         subtitle: 'Behavioral signals and session metrics' },
   '/teacher/help-requests':  { title: 'Help Requests',       subtitle: 'Students asking for assistance' },
@@ -29,12 +27,12 @@ const TEACHER_META: Record<string, { title: string; subtitle: string }> = {
 
 const resolveTeacherMeta = (pathname: string) => {
   if (TEACHER_META[pathname]) return TEACHER_META[pathname];
-  if (pathname.startsWith('/teacher/classes/'))             return { title: 'Class Details',        subtitle: 'Course overview, students, and assignments' };
+  if (pathname.startsWith('/teacher/classes/'))             return { title: 'Class Details',        subtitle: 'Course overview, students, and exams' };
   if (pathname.startsWith('/teacher/live-monitor/'))        return { title: 'Student Live Session', subtitle: 'Observe and assist a student in real time' };
   if (pathname.startsWith('/teacher/session-replay/'))      return { title: 'Session Replay',       subtitle: 'Replay a recorded coding session' };
   if (pathname.startsWith('/teacher/ai-analysis/'))         return { title: 'AI Analysis',          subtitle: 'Behavioral signals and session metrics' };
-  if (pathname.startsWith('/teacher/assignments/create'))   return { title: 'Create Assignment',   subtitle: 'Define a new coding assignment' };
-  if (pathname.startsWith('/teacher/assignments/'))         return { title: 'Assignment Details',  subtitle: 'View details, test cases, and submissions' };
+  if (pathname.startsWith('/teacher/exams/create'))         return { title: 'Create Exam',         subtitle: 'Define a new coding exam' };
+  if (pathname.startsWith('/teacher/exams/'))               return { title: 'Exam Details',        subtitle: 'View details, test cases, and submissions' };
   if (pathname.startsWith('/teacher/submissions/'))         return { title: 'Submission Review',   subtitle: 'Grade and leave feedback' };
   return { title: 'Teacher Portal', subtitle: '' };
 };

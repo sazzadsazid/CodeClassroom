@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, ClipboardList, TrendingUp, ChevronRight, Eye } from 'lucide-react';
-import { Card, Badge, ProgressBar, langBadgeStyle } from '../../../components/ui';
-import { teacherCourses, teacherStudents, teacherAssignments } from '../../../data/teacherMockData';
+import { ArrowLeft, Users, TrendingUp, Eye } from 'lucide-react';
+import { Card, ProgressBar, langBadgeStyle } from '../../../components/ui';
+import { teacherCourses, teacherStudents } from '../../../data/teacherMockData';
 
-type Tab = 'overview' | 'students' | 'assignments';
+type Tab = 'overview' | 'students';
 
 const ClassDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +13,6 @@ const ClassDetails: React.FC = () => {
 
   const course = teacherCourses.find(c => c.id === id);
   const students = teacherStudents.filter(s => s.courseId === id);
-  const assignments = teacherAssignments.filter(a => a.courseId === id);
 
   if (!course) return (
     <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -51,7 +50,6 @@ const ClassDetails: React.FC = () => {
         <div style={{ display: 'flex', gap: '28px', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--color-border)' }}>
           {[
             { label: 'Students', value: course.studentCount, icon: <Users size={14} /> },
-            { label: 'Assignments', value: course.assignmentCount, icon: <ClipboardList size={14} /> },
             { label: 'Avg Score', value: `${Math.round(avgScore)}%`, icon: <TrendingUp size={14} /> },
           ].map(stat => (
             <div key={stat.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -65,7 +63,7 @@ const ClassDetails: React.FC = () => {
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '6px', marginBottom: '20px' }}>
-        {(['overview', 'students', 'assignments'] as Tab[]).map(t => (
+        {(['overview', 'students'] as Tab[]).map(t => (
           <button key={t} style={tabStyle(t)} onClick={() => setActiveTab(t)}>
             {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
@@ -87,22 +85,6 @@ const ClassDetails: React.FC = () => {
                 <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', width: '16px', textAlign: 'right' }}>{r.count}</span>
               </div>
             ))}
-          </Card>
-          {/* Submission rate */}
-          <Card>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '16px' }}>Submissions by Assignment</h3>
-            {assignments.map(a => {
-              const pct = Math.round((a.submissionsCount / a.totalStudents) * 100);
-              return (
-                <div key={a.id} style={{ marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '12px', color: 'var(--color-text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>{a.title}</span>
-                    <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', flexShrink: 0 }}>{a.submissionsCount}/{a.totalStudents}</span>
-                  </div>
-                  <ProgressBar value={pct} height={5} />
-                </div>
-              );
-            })}
           </Card>
         </div>
       )}
@@ -143,28 +125,7 @@ const ClassDetails: React.FC = () => {
         </div>
       )}
 
-      {/* Tab: Assignments */}
-      {activeTab === 'assignments' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {assignments.map(a => {
-            const sc = a.status === 'active' ? { label: 'Active', color: '#10b981', bg: 'rgba(16,185,129,0.12)' } : a.status === 'closed' ? { label: 'Closed', color: '#64748b', bg: 'rgba(100,116,139,0.12)' } : { label: 'Draft', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' };
-            return (
-              <Card key={a.id} style={{ cursor: 'pointer', padding: '16px 20px' }} onClick={() => navigate(`/teacher/assignments/${a.id}`)}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
-                      <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>{a.title}</p>
-                      <Badge label={sc.label} color={sc.color} bg={sc.bg} />
-                    </div>
-                    <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>Due {a.deadline} · {a.submissionsCount}/{a.totalStudents} submitted · {a.maxScore} pts</p>
-                  </div>
-                  <ChevronRight size={16} color="var(--color-text-muted)" />
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+
     </div>
   );
 };

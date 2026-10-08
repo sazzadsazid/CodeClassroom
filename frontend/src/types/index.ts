@@ -16,35 +16,6 @@ export interface Course {
   description: string;
 }
 
-// ─── Assignment ────────────────────────────────────────────────────────────
-export interface Assignment {
-  id: string;
-  title: string;
-  course: string;
-  courseId: string;
-  language: string;
-  dueDate: string;
-  status: 'pending' | 'submitted' | 'graded' | 'overdue';
-  score?: number;
-  maxScore: number;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  description: string;
-  requirements: string[];
-}
-
-// ─── Submission ────────────────────────────────────────────────────────────
-export interface Submission {
-  id: string;
-  assignmentId: string;
-  assignmentTitle: string;
-  course: string;
-  language: string;
-  submittedAt: string;
-  status: 'pending' | 'passed' | 'failed';
-  score?: number;
-  maxScore: number;
-  feedback?: string;
-}
 
 // ─── CodingHistory ─────────────────────────────────────────────────────────
 export interface CodingActivity {
@@ -58,8 +29,8 @@ export interface CodingActivity {
 // ─── CodingSession ─────────────────────────────────────────────────────────
 export interface CodingSession {
   id: string;
-  assignmentId: string;
-  assignmentTitle: string;
+  attemptId: string;
+  examTitle: string;
   course: string;
   language: string;
   date: string;
@@ -78,7 +49,7 @@ export interface Notification {
   timestamp: string;
   read: boolean;
   courseId?: string;
-  assignmentId?: string;
+  examId?: string;
 }
 
 // ─── Stats ────────────────────────────────────────────────────────────────

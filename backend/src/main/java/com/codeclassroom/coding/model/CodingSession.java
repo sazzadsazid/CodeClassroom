@@ -1,6 +1,6 @@
 package com.codeclassroom.coding.model;
 
-import com.codeclassroom.assignment.model.Language;
+import com.codeclassroom.common.model.Language;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +21,7 @@ public class CodingSession {
     private Long id;
     
     private Long studentId;
-    private Long assignmentId;
+    private Long attemptId;
     
     @Column(columnDefinition = "TEXT")
     private String code;

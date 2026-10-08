@@ -3,18 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import {
   BookOpen,
   CheckCircle2,
-  Clock,
   TrendingUp,
   Flame,
   Code2,
   ArrowRight,
-  AlertCircle,
   ChevronRight,
+  ClipboardList,
 } from 'lucide-react';
 import {
   mockStats,
   mockCourses,
-  mockAssignments,
   recentActivity,
   mockNotifications,
 } from '../../../data/mockData';
@@ -85,15 +83,6 @@ const difficultyColor = (d: string) => {
   return { color: '#ef4444', bg: 'rgba(239,68,68,0.12)' };
 };
 
-const statusConfig = (status: string) => {
-  switch (status) {
-    case 'pending': return { label: 'Pending', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' };
-    case 'submitted': return { label: 'Submitted', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' };
-    case 'graded': return { label: 'Graded', color: '#10b981', bg: 'rgba(16,185,129,0.12)' };
-    case 'overdue': return { label: 'Overdue', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' };
-    default: return { label: status, color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' };
-  }
-};
 
 const langColor = (lang: string) => {
   const map: Record<string, string> = {
@@ -176,9 +165,6 @@ const SectionHeader: React.FC<{ title: string; action?: string; onAction?: () =>
 // ─── Dashboard Page ───────────────────────────────────────────────────────
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const pendingAssignments = mockAssignments.filter(
-    (a) => a.status === 'pending' || a.status === 'overdue'
-  );
   const unreadNotifications = mockNotifications.filter((n) => !n.read);
 
   return (
@@ -207,12 +193,13 @@ const Dashboard: React.FC = () => {
           iconBg="rgba(16,185,129,0.15)"
         />
         <StatCard
-          icon={<Clock size={20} color="#f59e0b" />}
-          label="Pending"
-          value={mockStats.pendingAssignments}
-          sub="Need attention"
-          iconBg="rgba(245,158,11,0.15)"
+          icon={<ClipboardList size={20} color="#8b5cf6" />}
+          label="Active Exams"
+          value={1}
+          sub="Ready to take"
+          iconBg="rgba(139,92,246,0.15)"
         />
+
         <StatCard
           icon={<TrendingUp size={20} color="#3b82f6" />}
           label="Avg. Score"
@@ -312,63 +299,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Pending Assignments */}
-          <div>
-            <SectionHeader
-              title="Upcoming Assignments"
-              action="View all"
-              onAction={() => navigate('/student/assignments')}
-            />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {pendingAssignments.map((a) => {
-                const sc = statusConfig(a.status);
-                const dc = difficultyColor(a.difficulty);
-                return (
-                  <Card key={a.id}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                          {a.status === 'overdue' && (
-                            <AlertCircle size={14} color="var(--color-error)" style={{ flexShrink: 0 }} />
-                          )}
-                          <h3 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
-                            {a.title}
-                          </h3>
-                        </div>
-                        <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '8px' }}>
-                          {a.course}
-                        </p>
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          <Badge {...sc} label={sc.label} />
-                          <Badge {...dc} label={a.difficulty} />
-                          <Badge
-                            label={a.language}
-                            color={langColor(a.language)}
-                            bg={`${langColor(a.language)}1a`}
-                          />
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '2px' }}>Due</p>
-                        <p
-                          style={{
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: a.status === 'overdue' ? 'var(--color-error)' : 'var(--color-text-secondary)',
-                          }}
-                        >
-                          {a.dueDate}
-                        </p>
-                        <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
-                          {a.maxScore} pts
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
+
         </div>
 
         {/* Right Column */}

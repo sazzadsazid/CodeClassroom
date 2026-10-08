@@ -73,6 +73,7 @@ export interface LiveStudent {
   linesWritten: number;
   runAttempts: number;
   sessionStart: string;
+  language?: string;
 }
 
 export interface CodingEvent {

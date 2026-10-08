@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  BookOpen, Users, ClipboardList, Send, Clock, HelpCircle,
+  BookOpen, Users, ClipboardList, HelpCircle,
   ChevronRight,
 } from 'lucide-react';
-import { Card, Badge, langBadgeStyle } from '../../../components/ui';
+import { Card, langBadgeStyle } from '../../../components/ui';
 import {
-  teacherDashboardStats, teacherCourses, teacherSubmissions,
-  liveStudents, teacherAssignments,
+  teacherDashboardStats, teacherCourses,
+  liveStudents,
 } from '../../../data/teacherMockData';
 
 const StatCard: React.FC<{
@@ -31,7 +31,6 @@ const StatCard: React.FC<{
 
 const TeacherDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const pendingSubmissions = teacherSubmissions.filter(s => s.status === 'pending');
   const activeLive = liveStudents.filter(s => s.status === 'coding' || s.status === 'online');
 
   return (
@@ -41,9 +40,6 @@ const TeacherDashboard: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
         <StatCard icon={<BookOpen size={20} color="#6366f1" />} label="My Courses" value={teacherDashboardStats.totalCourses} sub="Active this semester" iconBg="rgba(99,102,241,0.15)" onClick={() => navigate('/teacher/classes')} />
         <StatCard icon={<Users size={20} color="#10b981" />} label="Total Students" value={teacherDashboardStats.totalStudents} sub="Across all courses" iconBg="rgba(16,185,129,0.15)" onClick={() => navigate('/teacher/classes')} />
-        <StatCard icon={<ClipboardList size={20} color="#f59e0b" />} label="Active Assignments" value={teacherDashboardStats.activeAssignments} sub="Currently open" iconBg="rgba(245,158,11,0.15)" onClick={() => navigate('/teacher/assignments')} />
-        <StatCard icon={<Send size={20} color="#3b82f6" />} label="Recent Submissions" value={teacherDashboardStats.recentSubmissions} sub="In last 24 hours" iconBg="rgba(59,130,246,0.15)" onClick={() => navigate('/teacher/submissions')} />
-        <StatCard icon={<Clock size={20} color="#a78bfa" />} label="Pending Reviews" value={teacherDashboardStats.pendingReviews} sub="Awaiting feedback" iconBg="rgba(167,139,250,0.15)" onClick={() => navigate('/teacher/submissions')} />
         <StatCard icon={<HelpCircle size={20} color="#ef4444" />} label="Help Requests" value={teacherDashboardStats.helpRequests} sub="Students need help" iconBg="rgba(239,68,68,0.15)" onClick={() => navigate('/teacher/monitor')} />
       </div>
 
@@ -82,35 +78,7 @@ const TeacherDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Pending Submissions */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-text-primary)' }}>Pending Reviews</h2>
-              <button onClick={() => navigate('/teacher/submissions')} style={{ fontSize: '13px', color: 'var(--color-accent)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>View all →</button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {pendingSubmissions.map(sub => (
-                <Card key={sub.id} style={{ padding: '14px 18px', cursor: 'pointer' }}
-                  onClick={() => navigate(`/teacher/submissions/${sub.id}`)}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>
-                        {sub.studentAvatar}
-                      </div>
-                      <div>
-                        <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>{sub.studentName}</p>
-                        <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{sub.assignmentTitle}</p>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Badge label="Pending" color="#f59e0b" bg="rgba(245,158,11,0.12)" />
-                      <ChevronRight size={14} color="var(--color-text-muted)" />
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
+
         </div>
 
         {/* Right Column */}
@@ -145,30 +113,7 @@ const TeacherDashboard: React.FC = () => {
             </Card>
           </div>
 
-          {/* Assignments Overview */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-text-primary)' }}>Assignments</h2>
-              <button onClick={() => navigate('/teacher/assignments')} style={{ fontSize: '13px', color: 'var(--color-accent)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>View all →</button>
-            </div>
-            <Card style={{ padding: '0' }}>
-              {teacherAssignments.filter(a => a.status === 'active').map((a, idx, arr) => {
-                const pct = Math.round((a.submissionsCount / a.totalStudents) * 100);
-                return (
-                  <div key={a.id} style={{ padding: '14px 18px', borderBottom: idx < arr.length - 1 ? '1px solid var(--color-border)' : 'none' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-text-primary)' }}>{a.title}</p>
-                      <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{a.submissionsCount}/{a.totalStudents}</span>
-                    </div>
-                    <div style={{ height: '4px', backgroundColor: 'var(--color-bg-hover)', borderRadius: '2px', overflow: 'hidden' }}>
-                      <div style={{ width: `${pct}%`, height: '100%', backgroundColor: 'var(--color-accent)', borderRadius: '2px' }} />
-                    </div>
-                    <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px' }}>Due {a.deadline}</p>
-                  </div>
-                );
-              })}
-            </Card>
-          </div>
+
         </div>
       </div>
     </div>

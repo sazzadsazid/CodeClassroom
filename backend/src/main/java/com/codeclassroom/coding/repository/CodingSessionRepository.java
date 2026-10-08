@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface CodingSessionRepository extends JpaRepository<CodingSession, Long> {
     List<CodingSession> findByStudentId(Long studentId);
-    boolean existsByStudentIdAndAssignmentId(Long studentId, Long assignmentId);
+    List<CodingSession> findByAttemptId(Long attemptId);
+    boolean existsByStudentIdAndAttemptId(Long studentId, Long attemptId);
 }

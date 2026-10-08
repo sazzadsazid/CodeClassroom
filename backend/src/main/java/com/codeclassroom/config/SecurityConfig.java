@@ -47,10 +47,19 @@ public class SecurityConfig {
                 .requestMatchers("/api/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/courses/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                 .requestMatchers("/api/courses/**").hasAnyRole("TEACHER", "ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/assignments/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
-                .requestMatchers("/api/assignments/**").hasAnyRole("TEACHER", "ADMIN")
                 .requestMatchers("/api/coding-sessions/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                 .requestMatchers("/api/submissions/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/exams/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/exams/*/attempts").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                .requestMatchers("/api/exams/**").hasAnyRole("TEACHER", "ADMIN")
+                // Hidden grading test cases: TEACHER only (ownership enforced in ExamTestCaseService).
+                // Must stay above the student-readable GET /api/exam-questions/** rule.
+                .requestMatchers("/api/exam-questions/*/test-cases", "/api/exam-questions/*/test-cases/**").hasRole("TEACHER")
+                .requestMatchers("/api/exam-test-cases/**").hasRole("TEACHER")
+                .requestMatchers(HttpMethod.GET, "/api/exam-questions/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                .requestMatchers("/api/exam-questions/**").hasAnyRole("TEACHER", "ADMIN")
+                .requestMatchers("/api/exam-attempts/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                .requestMatchers("/api/exam-answers/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exceptions -> exceptions
@@ -68,7 +77,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);

@@ -1,6 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Eye } from 'lucide-react';
 import { mockCodingHistory, mockCodingSessions } from '../../../data/mockData';
 import { Card, Badge, statusColors, langBadgeStyle } from '../../../components/ui';
 
@@ -10,7 +8,6 @@ const langColor = (lang: string): string => {
 };
 
 const CodingHistory: React.FC = () => {
-  const navigate = useNavigate();
   const maxLines = Math.max(...mockCodingHistory.map((d) => d.linesOfCode), 1);
 
   return (
@@ -89,10 +86,10 @@ const CodingHistory: React.FC = () => {
                   flexWrap: 'wrap',
                 }}
               >
-                {/* Assignment info */}
+                {/* Session info */}
                 <div style={{ flex: 1, minWidth: '220px' }}>
                   <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '3px' }}>
-                    {session.assignmentTitle}
+                    {session.examTitle}
                   </h3>
                   <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{session.course}</p>
                 </div>
@@ -125,36 +122,10 @@ const CodingHistory: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Right badges + button */}
+                {/* Right badges */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                   <Badge label={sc.label} color={sc.color} bg={sc.bg} />
                   <span style={langBadgeStyle(session.language)}>{session.language}</span>
-                  <button
-                    onClick={() => navigate(`/workspace/${session.assignmentId}`)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '7px 14px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--color-border)',
-                      backgroundColor: 'transparent',
-                      color: 'var(--color-accent)',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'background-color 0.15s',
-                    }}
-                    onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-accent-light)')
-                    }
-                    onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent')
-                    }
-                  >
-                    <Eye size={13} />
-                    View Session
-                  </button>
                 </div>
               </div>
             );

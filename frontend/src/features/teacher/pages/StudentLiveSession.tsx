@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import { ArrowLeft, Eye, MessageSquare, Edit3, Play, BarChart2 } from 'lucide-react';
 import { liveStudents } from '../../../data/teacherMockData';
-import { Badge } from '../../../components/ui';
+import { Badge, getMonacoLanguage } from '../../../components/ui';
 
 const MOCK_CODE = `public class BinarySearchTree {
     private Node root;
@@ -145,7 +145,7 @@ const StudentLiveSession: React.FC = () => {
           </div>
           <Editor
             height="520px"
-            defaultLanguage="java"
+            defaultLanguage={getMonacoLanguage(student.language || 'JAVA')}
             value={MOCK_CODE}
             theme="vs-dark"
             options={{ readOnly: mode !== 'edit', minimap: { enabled: false }, fontSize: 13, lineHeight: 22, scrollBeyondLastLine: false, padding: { top: 12 } }}

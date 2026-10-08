@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import { ArrowLeft, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { liveStudents, mockCodingEvents, replayCodeSnapshots } from '../../../data/teacherMockData';
-import { Badge } from '../../../components/ui';
+import { Badge, getMonacoLanguage } from '../../../components/ui';
 
 const SPEEDS = [0.5, 1, 1.5, 2];
 
@@ -113,7 +113,7 @@ const SessionReplay: React.FC = () => {
           </div>
           <Editor
             height="440px"
-            defaultLanguage="java"
+            defaultLanguage={getMonacoLanguage(student?.language || 'JAVA')}
             value={currentCode}
             theme="vs-dark"
             options={{ readOnly: true, minimap: { enabled: false }, fontSize: 13, lineHeight: 22, scrollBeyondLastLine: false, padding: { top: 12 } }}

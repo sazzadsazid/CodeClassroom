@@ -122,14 +122,17 @@ export const statusColors = (status: string): { color: string; bg: string; label
 };
 
 export const langColor = (lang: string): string => {
+  const normalized = lang.toUpperCase();
   const map: Record<string, string> = {
-    Java: '#f89820',
-    TypeScript: '#3178c6',
-    Python: '#3572a5',
-    Multiple: '#8b5cf6',
-    JavaScript: '#f7df1e',
+    JAVA: '#f89820',
+    TYPESCRIPT: '#3178c6',
+    PYTHON: '#3572a5',
+    C: '#a8b9cc',
+    CPP: '#f34b7d',
+    JAVASCRIPT: '#f7df1e',
+    MULTIPLE: '#8b5cf6',
   };
-  return map[lang] ?? '#6366f1';
+  return map[normalized] ?? '#6366f1';
 };
 
 export const langBadgeStyle = (lang: string): React.CSSProperties => ({
@@ -140,4 +143,17 @@ export const langBadgeStyle = (lang: string): React.CSSProperties => ({
   padding: '3px 8px',
   borderRadius: '6px',
   whiteSpace: 'nowrap' as const,
+  textTransform: 'capitalize',
 });
+
+// Monaco language mapping
+export const getMonacoLanguage = (lang: string): string => {
+  const map: Record<string, string> = {
+    JAVA: 'java',
+    PYTHON: 'python',
+    C: 'c',
+    CPP: 'cpp',
+    JAVASCRIPT: 'javascript',
+  };
+  return map[lang.toUpperCase()] || lang.toLowerCase();
+};

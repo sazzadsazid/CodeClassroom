@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, BookOpen, ClipboardList, History, Send, Bell,
-  Code2, ChevronLeft, ChevronRight, Users, Monitor, GraduationCap,
+  LayoutDashboard, BookOpen, ClipboardList, History, Bell,
+  Code2, ChevronLeft, ChevronRight, Monitor, GraduationCap,
   BarChart2, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { mockNotifications } from '../../data/mockData';
@@ -18,18 +18,16 @@ interface NavItem {
 const studentNavItems: NavItem[] = [
   { id: 'dashboard',     label: 'Dashboard',      path: '/',               icon: <LayoutDashboard size={20} /> },
   { id: 'courses',       label: 'My Courses',      path: '/courses',        icon: <BookOpen size={20} /> },
-  { id: 'assignments',   label: 'Assignments',     path: '/assignments',    icon: <ClipboardList size={20} /> },
+  { id: 'exams',         label: 'Exams',           path: '/exams',          icon: <ClipboardList size={20} /> },
   { id: 'history',       label: 'Coding History',  path: '/history',        icon: <History size={20} /> },
-  { id: 'submissions',   label: 'Submissions',     path: '/submissions',    icon: <Send size={20} /> },
   { id: 'notifications', label: 'Notifications',   path: '/notifications',  icon: <Bell size={20} /> },
 ];
 
 const teacherNavItems: NavItem[] = [
   { id: 'teacher-dashboard',   label: 'Dashboard',       path: '/teacher',                  icon: <LayoutDashboard size={20} /> },
   { id: 'teacher-classes',     label: 'My Classes',      path: '/teacher/classes',          icon: <GraduationCap size={20} /> },
+  { id: 'teacher-exams',       label: 'Exams',           path: '/teacher/exams',            icon: <ClipboardList size={20} /> },
   { id: 'teacher-monitor',     label: 'Live Monitor',    path: '/teacher/monitor',          icon: <Monitor size={20} /> },
-  { id: 'teacher-assignments', label: 'Assignments',     path: '/teacher/assignments',      icon: <ClipboardList size={20} /> },
-  { id: 'teacher-submissions', label: 'Submissions',     path: '/teacher/submissions',      icon: <Users size={20} /> },
   { id: 'teacher-analysis',    label: 'AI Analysis',     path: '/teacher/analysis/ts1',    icon: <BarChart2 size={20} /> },
 ];
 
@@ -105,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
 
   return (
     <aside style={{
-      width: collapsed ? '72px' : '240px', minHeight: '100vh',
+      width: collapsed ? '72px' : '240px', height: '100dvh',
       backgroundColor: 'var(--color-bg-secondary)', borderRight: '1px solid var(--color-border)',
       display: 'flex', flexDirection: 'column', transition: 'width 0.25s ease', flexShrink: 0, position: 'relative',
     }}>
@@ -152,31 +150,33 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
         </div>
       </nav>
 
-      {/* Collapse toggle */}
-      <button
-        onClick={onToggleCollapse}
-        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        style={{ margin: '12px auto', width: '32px', height: '32px', borderRadius: '50%', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)', color: 'var(--color-text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background-color 0.15s, color 0.15s' }}
-        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-bg-hover)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-primary)'; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-bg-card)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-secondary)'; }}
-      >
-        {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
-      </button>
+      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column' }}>
+        {/* Collapse toggle */}
+        <button
+          onClick={onToggleCollapse}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          style={{ margin: '12px auto', width: '32px', height: '32px', borderRadius: '50%', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-card)', color: 'var(--color-text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background-color 0.15s, color 0.15s', flexShrink: 0 }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-bg-hover)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-primary)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-bg-card)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-secondary)'; }}
+        >
+          {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+        </button>
 
-      {/* User profile */}
-      {!collapsed ? (
-        <div style={{ padding: '16px 20px', borderTop: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '13px', color: '#fff', flexShrink: 0 }}>SC</div>
-          <div style={{ overflow: 'hidden' }}>
-            <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Dr. Sarah Chen</p>
-            <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Teacher</p>
+        {/* User profile */}
+        {!collapsed ? (
+          <div style={{ padding: '16px 20px', borderTop: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '13px', color: '#fff', flexShrink: 0 }}>SC</div>
+            <div style={{ overflow: 'hidden' }}>
+              <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Dr. Sarah Chen</p>
+              <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Teacher</p>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div style={{ padding: '16px 0', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '13px', color: '#fff' }}>SC</div>
-        </div>
-      )}
+        ) : (
+          <div style={{ padding: '16px 0', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '13px', color: '#fff' }}>SC</div>
+          </div>
+        )}
+      </div>
     </aside>
   );
 };

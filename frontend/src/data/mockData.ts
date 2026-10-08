@@ -1,7 +1,5 @@
 import type {
   Course,
-  Assignment,
-  Submission,
   CodingActivity,
   CodingSession,
   Notification,
@@ -80,181 +78,14 @@ export const mockCourses: Course[] = [
   },
 ];
 
-// ─── Assignments ──────────────────────────────────────────────────────────
-export const mockAssignments: Assignment[] = [
-  {
-    id: 'a1',
-    title: 'Implement a Binary Search Tree',
-    course: 'Data Structures & Algorithms',
-    courseId: 'c1',
-    language: 'Java',
-    dueDate: '2026-10-08',
-    status: 'pending',
-    maxScore: 100,
-    difficulty: 'Medium',
-    description:
-      'Implement a fully functional Binary Search Tree (BST) in Java. Your implementation must support insertion, deletion, search, and the three standard traversal methods: in-order, pre-order, and post-order. You are also required to write JUnit unit tests covering all operations.',
-    requirements: [
-      'Implement insert(int value) method',
-      'Implement delete(int value) method',
-      'Implement search(int value) → boolean method',
-      'Implement inOrder(), preOrder(), postOrder() traversals',
-      'Write at least 10 JUnit test cases',
-      'Include time and space complexity analysis in comments',
-      'Handle edge cases: empty tree, single node, duplicate values',
-    ],
-  },
-  {
-    id: 'a2',
-    title: 'Build a REST API with Express',
-    course: 'Full-Stack Web Development',
-    courseId: 'c2',
-    language: 'TypeScript',
-    dueDate: '2026-10-12',
-    status: 'submitted',
-    maxScore: 100,
-    difficulty: 'Medium',
-    description:
-      'Create a production-ready CRUD REST API using Express.js and TypeScript. The API should manage a "Books" resource with full Create, Read, Update, Delete support. Implement proper request validation, error handling middleware, and consistent JSON response formatting.',
-    requirements: [
-      'Use Express.js with TypeScript',
-      'Implement GET /books, POST /books, PUT /books/:id, DELETE /books/:id',
-      'Add request body validation using a validation library',
-      'Implement global error handling middleware',
-      'Return consistent JSON responses with status codes',
-      'Write a Postman collection or README with API documentation',
-      'Use in-memory storage (no database required)',
-    ],
-  },
-  {
-    id: 'a3',
-    title: 'Data Cleaning with Pandas',
-    course: 'Python for Data Science',
-    courseId: 'c3',
-    language: 'Python',
-    dueDate: '2026-09-30',
-    status: 'graded',
-    score: 92,
-    maxScore: 100,
-    difficulty: 'Easy',
-    description:
-      'You are provided with a raw CSV dataset containing customer records with missing values, duplicate rows, and inconsistent formatting. Your task is to clean and preprocess this dataset using Pandas so it is ready for analysis.',
-    requirements: [
-      'Load the provided CSV file using pd.read_csv()',
-      'Identify and handle all missing values (drop or impute)',
-      'Remove duplicate rows',
-      'Normalize column names to snake_case',
-      'Convert date columns to datetime type',
-      'Export the cleaned dataset as cleaned_data.csv',
-      'Produce a brief summary report of changes made',
-    ],
-  },
-  {
-    id: 'a4',
-    title: 'Design a URL Shortener',
-    course: 'System Design Fundamentals',
-    courseId: 'c4',
-    language: 'Multiple',
-    dueDate: '2026-09-25',
-    status: 'overdue',
-    maxScore: 100,
-    difficulty: 'Hard',
-    description:
-      'Design a highly scalable URL shortening service similar to bit.ly. You are not required to implement the code — the focus is on architecture, data modelling, scalability decisions, and trade-off analysis. Submit a written design document with diagrams.',
-    requirements: [
-      'Define functional and non-functional requirements',
-      'Estimate traffic: reads/writes per second, storage over 5 years',
-      'Design the database schema (key-value or relational)',
-      'Explain the URL hashing/encoding strategy',
-      'Design the architecture diagram (load balancer, app servers, cache, DB)',
-      'Discuss caching strategy (Redis) and cache invalidation',
-      'Address redirect performance: 301 vs 302 redirects',
-      'Discuss single-point-of-failure prevention',
-    ],
-  },
-  {
-    id: 'a5',
-    title: 'Implement Quick Sort',
-    course: 'Data Structures & Algorithms',
-    courseId: 'c1',
-    language: 'Java',
-    dueDate: '2026-10-20',
-    status: 'pending',
-    maxScore: 80,
-    difficulty: 'Medium',
-    description:
-      'Implement the Quick Sort algorithm in Java. Your solution must include both the standard and randomised pivot variants, and must be benchmarked against Java\'s built-in Arrays.sort() on arrays of size 1k, 10k, and 100k.',
-    requirements: [
-      'Implement standard Quick Sort with last-element pivot',
-      'Implement randomised Quick Sort with random pivot selection',
-      'Handle edge cases: empty array, single element, already sorted',
-      'Benchmark both variants against Arrays.sort()',
-      'Include a written complexity analysis (best, average, worst case)',
-      'Write JUnit tests for correctness',
-    ],
-  },
-];
 
-// ─── Submissions ──────────────────────────────────────────────────────────
-export const mockSubmissions: Submission[] = [
-  {
-    id: 's1',
-    assignmentId: 'a3',
-    assignmentTitle: 'Data Cleaning with Pandas',
-    course: 'Python for Data Science',
-    language: 'Python',
-    submittedAt: '2026-09-28T14:32:00Z',
-    status: 'passed',
-    score: 92,
-    maxScore: 100,
-    feedback:
-      'Excellent work! Code is clean and well-documented. Minor improvement: handle NaN values more explicitly rather than dropping all rows with any null.',
-  },
-  {
-    id: 's2',
-    assignmentId: 'a2',
-    assignmentTitle: 'Build a REST API with Express',
-    course: 'Full-Stack Web Development',
-    language: 'TypeScript',
-    submittedAt: '2026-10-05T09:15:00Z',
-    status: 'pending',
-    maxScore: 100,
-    feedback: undefined,
-  },
-  {
-    id: 's3',
-    assignmentId: 'a3',
-    assignmentTitle: 'Linear Regression from Scratch',
-    course: 'Python for Data Science',
-    language: 'Python',
-    submittedAt: '2026-09-20T18:00:00Z',
-    status: 'passed',
-    score: 78,
-    maxScore: 100,
-    feedback:
-      'Good implementation but the gradient descent had a minor bug affecting convergence speed. The cost function was not being computed correctly after epoch 50.',
-  },
-  {
-    id: 's4',
-    assignmentId: 'a1',
-    assignmentTitle: 'HashMap Implementation',
-    course: 'Data Structures & Algorithms',
-    language: 'Java',
-    submittedAt: '2026-09-15T11:45:00Z',
-    status: 'failed',
-    score: 48,
-    maxScore: 100,
-    feedback:
-      'The collision resolution strategy was not correctly implemented. Please review chaining vs open addressing. The delete() method also had logic errors causing incorrect results on some test cases.',
-  },
-];
 
 // ─── Coding Sessions ──────────────────────────────────────────────────────
 export const mockCodingSessions: CodingSession[] = [
   {
     id: 'cs1',
-    assignmentId: 'a3',
-    assignmentTitle: 'Data Cleaning with Pandas',
+    attemptId: 'a3',
+    examTitle: 'Data Cleaning with Pandas',
     course: 'Python for Data Science',
     language: 'Python',
     date: '2026-09-28T12:00:00Z',
@@ -265,8 +96,8 @@ export const mockCodingSessions: CodingSession[] = [
   },
   {
     id: 'cs2',
-    assignmentId: 'a2',
-    assignmentTitle: 'Build a REST API with Express',
+    attemptId: 'a2',
+    examTitle: 'Build a REST API with Express',
     course: 'Full-Stack Web Development',
     language: 'TypeScript',
     date: '2026-10-05T08:00:00Z',
@@ -277,8 +108,8 @@ export const mockCodingSessions: CodingSession[] = [
   },
   {
     id: 'cs3',
-    assignmentId: 'a1',
-    assignmentTitle: 'Implement a Binary Search Tree',
+    attemptId: 'a1',
+    examTitle: 'Implement a Binary Search Tree',
     course: 'Data Structures & Algorithms',
     language: 'Java',
     date: '2026-10-01T16:30:00Z',
@@ -289,8 +120,8 @@ export const mockCodingSessions: CodingSession[] = [
   },
   {
     id: 'cs4',
-    assignmentId: 'a4',
-    assignmentTitle: 'Design a URL Shortener',
+    attemptId: 'a4',
+    examTitle: 'Design a URL Shortener',
     course: 'System Design Fundamentals',
     language: 'Multiple',
     date: '2026-09-22T10:00:00Z',
@@ -301,8 +132,8 @@ export const mockCodingSessions: CodingSession[] = [
   },
   {
     id: 'cs5',
-    assignmentId: 'a3',
-    assignmentTitle: 'Linear Regression from Scratch',
+    attemptId: 'a3',
+    examTitle: 'Linear Regression from Scratch',
     course: 'Python for Data Science',
     language: 'Python',
     date: '2026-09-19T14:00:00Z',
@@ -334,7 +165,7 @@ export const mockNotifications: Notification[] = [
     timestamp: '2026-10-02T08:00:00Z',
     read: false,
     courseId: 'c1',
-    assignmentId: 'a5',
+    examId: 'a5',
   },
   {
     id: 'n2',
@@ -344,7 +175,7 @@ export const mockNotifications: Notification[] = [
     timestamp: '2026-10-01T16:30:00Z',
     read: false,
     courseId: 'c3',
-    assignmentId: 'a3',
+    examId: 'a3',
   },
   {
     id: 'n3',
@@ -354,7 +185,7 @@ export const mockNotifications: Notification[] = [
     timestamp: '2026-10-01T09:00:00Z',
     read: false,
     courseId: 'c1',
-    assignmentId: 'a1',
+    examId: 'a1',
   },
   {
     id: 'n4',
@@ -364,7 +195,7 @@ export const mockNotifications: Notification[] = [
     timestamp: '2026-09-30T11:00:00Z',
     read: false,
     courseId: 'c1',
-    assignmentId: 'a1',
+    examId: 'a1',
   },
   {
     id: 'n5',
@@ -392,7 +223,7 @@ export const mockNotifications: Notification[] = [
     timestamp: '2026-09-18T11:00:00Z',
     read: true,
     courseId: 'c1',
-    assignmentId: 'a1',
+    examId: 'a1',
   },
 ];
 
